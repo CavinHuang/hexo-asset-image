@@ -41,8 +41,8 @@ hexo.extend.filter.register('after_post_render', function(data){
           // For windows style path, we replace '\' to '/'.
           var src = $(this).attr('src').replace('\\', '/');
           if(!(/http[s]*.*|\/\/.*/.test(src)
-            || /^\s+\//.test(src)
-            || /^\s*\/uploads|images\//.test(src))) {
+              || /^\s+\//.test(src)
+              || /^\s*\/uploads|images\//.test(src))) {
             // For "about" page, the first part of "src" can't be removed.
             // In addition, to support multi-level local directory.
             var linkArray = link.split('/').filter(function(elem){
@@ -51,9 +51,16 @@ hexo.extend.filter.register('after_post_render', function(data){
             var srcArray = src.split('/').filter(function(elem){
               return elem != '' && elem != '.';
             });
-            if(srcArray.length > 1)
-            srcArray.shift();
-            src = srcArray.join('/');
+            if(srcArray.length > 1) {
+              srcArray.shift();
+              src = srcArray.join('/');
+            }
+
+            if (srcArray.length > 1 && linkArray.length > 1) {
+              if (linkArray[1] === srcArray[0]) {
+                link = linkArray[0] + '/'
+              }
+            }
 
             $(this).attr('src', config.root + link + src);
             console.info&&console.info("update link as:-->"+config.root + link + src);
